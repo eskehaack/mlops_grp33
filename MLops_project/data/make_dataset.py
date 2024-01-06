@@ -2,7 +2,7 @@ from torchvision import datasets
 
 
 def main():
-    data = datasets.Places365(root="data/raw/", download=True)
+    data = datasets.Food101(root="data/raw/", download=True)
     return data
 
 
