@@ -89,6 +89,26 @@ class VGG(pl.LightningModule):
         data, target = batch
         preds = self(data)
         loss = self.criterium(preds, target)
+        acc = (target == preds.argmax(dim=-1)).float().mean()
+        self.log("train_loss", loss)
+        self.log("train_acc", acc)
+        return loss
+
+    def validation_step(self, batch, batch_idx) -> STEP_OUTPUT:
+        data, target = batch
+        preds = self(data)
+        loss = self.criterium(preds, target)
+        acc = (target == preds.argmax(dim=-1)).float().mean()
+
+        self.log("val_acc", acc)
+        return loss
+
+    def test_step(self, batch, batch_idx) -> STEP_OUTPUT:
+        data, target = batch
+        preds = self(data)
+        loss = self.criterium(preds, target)
+        acc = (target == preds.argmax(dim=-1)).float().mean()
+        self.log("test_acc", acc)
         return loss
 
     def configure_optimizers(self) -> OptimizerLRScheduler:
