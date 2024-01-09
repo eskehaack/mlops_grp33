@@ -1,19 +1,22 @@
 import os
 import torch
 from torchvision import datasets, transforms
+from torch.utils.data import Dataset
+from torch.utils.data import Subset
+
 from tqdm import tqdm
 import json
-from typing import Dict, Any, List
+from typing import Dict, List, Tuple
 
 
-def load_statistics(stat_filename: str) -> Dict[str:float]:
+def load_statistics(stat_filename: str) -> Dict[str, float]:
     with open(f"data/processed/{stat_filename}", "r") as file:
         stats = json.load(file)
 
     return stats
 
 
-def calculate_mean_std() -> Dict[str, float]:
+def calculate_mean_std() -> Dict[str, List[float]]:
     """Iterates through the training dataset to calcuate the mean and std of the full
     dataset, to determine key statistics for normalization.
 
@@ -21,15 +24,12 @@ def calculate_mean_std() -> Dict[str, float]:
         Dict[str,float]: Keys are the metric names, values being list of the metrics themselves
     """
     transform = transforms.Compose([transforms.Resize((64, 64)), transforms.ToTensor()])
-    dataset = datasets.Food101(
-        root="data/raw/", split="train", download=False, transform=transform
-    )
-    loader = torch.utils.data.DataLoader(
-        dataset, batch_size=64, shuffle=False, num_workers=4
-    )
+    dataset = datasets.Food101(root="data/raw/", split="train", download=False, transform=transform)
+    loader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=False, num_workers=4)
 
-    mean = 0.0
-    std = 0.0
+    # Initilize the stat varialbes with 0 tensors of size 3 for each of the R,G,B channels
+    mean = torch.zeros(3)
+    std = torch.zeros(3)
     total_images_count = 0
     for images, _ in tqdm(loader):
         batch_samples = images.size(0)
@@ -66,10 +66,9 @@ def process_data(split: str, normalization_constants: Dict[str, float], seed: in
             transforms.Normalize(mean=mean, std=std),
         ]
     )
-    dataset = datasets.Food101(
-        root="data/raw/", split=split, download=False, transform=transform_normalized
-    )
+    dataset = datasets.Food101(root="data/raw/", split=split, download=False, transform=transform_normalized)
 
+    datasets_to_process: Dict[str, Subset] = {}
     # Split the dataset into training and validation if the split is 'train'
     if split == "train":
         train_size = int(0.95 * len(dataset))
@@ -84,20 +83,21 @@ def process_data(split: str, normalization_constants: Dict[str, float], seed: in
         datasets_to_process = {split: dataset}
 
     for subset, data in datasets_to_process.items():
+        data: Dataset[Tuple[torch.Tensor, int]]  # type: ignore
         processed_folder = f"./data/processed/{subset}"
         if not os.path.exists(processed_folder):
             os.makedirs(processed_folder)
 
         # Aggregate images and labels
-        for i, (image, label) in tqdm(enumerate(data), total=len(data)):
-            torch.save((image, label), os.path.join(processed_folder, f"data_{i}.pt"))
+        for i, (image, label) in tqdm(enumerate(data), total=len(data)):  # type: ignore
+            torch.save((image, label), os.path.join(processed_folder, f"data_{i}.pt"))  # type: ignore
 
 
 if __name__ == "__main__":
     seed = 42
     torch.manual_seed(seed)
     stat_filename = "training_split_stats.json"
-    if not stat_filename in os.listdir("data/processed"):
+    if stat_filename not in os.listdir("data/processed"):
         stats = calculate_mean_std()
         with open(f"data/processed/{stat_filename}", "w") as file:
             json.dump(stats, file)

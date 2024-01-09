@@ -7,19 +7,20 @@ from data.dataload import food101_dataloader
 
 
 class VGG(pl.LightningModule):
-    """Basic neural network class.
+    """Python Lightning module for simple VGG16 implementation.
 
     Args:
-        in_features: number of input features
-        out_features: number of output features
+        num_classes: number of labels to predict across
 
     """
 
-    def __init__(self, num_classes: int) -> None:
+    def __init__(self, num_classes: int, batch_size: int, num_workers: int, learning_rate: float) -> None:
         super().__init__()
 
         self.VGG16 = self._make_layers()
         self.classifier = nn.Sequential(
+            # Note that the 2*2 is the dimensions of the output of the CNN layers. For 256 this is 8*8.
+            # I have had to downscale to 2*2 for 64*64 images
             nn.Linear(512 * 2 * 2, 4096),
             nn.ReLU(True),
             nn.Dropout(),
@@ -31,8 +32,9 @@ class VGG(pl.LightningModule):
 
         self.criterium = nn.CrossEntropyLoss()
         self.train_loader, self.val_loader, self.test_loader = food101_dataloader(
-            batch_size=8
+            batch_size=batch_size, num_workers=num_workers
         )
+        self.lr = learning_rate
 
     def _make_layers(batch_norm=False) -> nn.Sequential:
         layers = []
@@ -59,13 +61,13 @@ class VGG(pl.LightningModule):
         ]
         for v in cfg:
             if v == "M":
-                layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
+                layers += [nn.MaxPool2d(kernel_size=2, stride=2)]  # type: ignore
             else:
-                conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
+                conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)  # type: ignore
                 if batch_norm:
-                    layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]
+                    layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]  # type: ignore
                 else:
-                    layers += [conv2d, nn.ReLU(inplace=True)]
+                    layers += [conv2d, nn.ReLU(inplace=True)]  # type: ignore
                 in_channels = v
         return nn.Sequential(*layers)
 
@@ -112,7 +114,7 @@ class VGG(pl.LightningModule):
         return loss
 
     def configure_optimizers(self) -> OptimizerLRScheduler:
-        return optim.Adam(self.parameters(), lr=1e-3)
+        return optim.Adam(self.parameters(), lr=self.lr)
 
     def train_dataloader(self):
         return self.train_loader

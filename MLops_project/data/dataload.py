@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import DataLoader
 import os
+from typing import List
 
 
 class ProcessedFood101(torch.utils.data.Dataset):
@@ -16,19 +17,20 @@ class ProcessedFood101(torch.utils.data.Dataset):
         return torch.load(os.path.join(self.processed_folder, file_name))
 
 
-def food101_dataloader(batch_size=64, num_workers=4):
+def food101_dataloader(batch_size=64, num_workers=4) -> List[DataLoader]:
+    """Custom dataloader creation function.
+      Takes processed data from the 3 splits: "train","val" and "test" from the data/processed/ folder
+    and packages it into 3 dataloaders for each split.
+
+    Returns:
+        List[DataLoader]: 3 loaders for each split in the respective order: Train, Validation, Test
+    """
     train = ProcessedFood101("data/processed/train")
     val = ProcessedFood101("data/processed/val")
     test = ProcessedFood101("data/processed/test")
-    train_loader = DataLoader(
-        train, batch_size=batch_size, shuffle=True, num_workers=num_workers
-    )
-    val_loader = DataLoader(
-        val, batch_size=batch_size, shuffle=False, num_workers=num_workers
-    )
-    test_loader = DataLoader(
-        test, batch_size=batch_size, shuffle=False, num_workers=num_workers
-    )
+    train_loader = DataLoader(train, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    val_loader = DataLoader(val, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    test_loader = DataLoader(test, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     return train_loader, val_loader, test_loader
 
 
