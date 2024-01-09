@@ -8,10 +8,11 @@ RUN apt update && \
 COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
 COPY MLops_project/ MLops_project/
-COPY data/ data/
+COPY data/processed data/processed
 
 WORKDIR /
-RUN pip install -r requirements.txt --no-cache-dir
+RUN --mount=type=cache,target=~/pip/.cache \
+    pip install -r requirements.txt --no-cache-dir
 RUN pip install . --no-deps --no-cache-dir
 
 ENTRYPOINT ["python", "-u", "MLops_project/train_model.py"]

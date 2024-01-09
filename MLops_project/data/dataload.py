@@ -2,12 +2,13 @@ import torch
 from torch.utils.data import DataLoader
 import os
 from typing import List
+from hydra.utils import get_original_cwd
 
 
 class ProcessedFood101(torch.utils.data.Dataset):
     def __init__(self, processed_folder):
-        self.processed_folder = processed_folder
-        self.file_names = os.listdir(processed_folder)
+        self.processed_folder = os.path.join(get_original_cwd(), processed_folder)
+        self.file_names = os.listdir(self.processed_folder)
 
     def __len__(self):
         return len(self.file_names)
