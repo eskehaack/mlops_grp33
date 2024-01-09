@@ -2,6 +2,7 @@ from pytorch_lightning import Trainer
 from models.model import VGG
 import pytorch_lightning as pl
 import torch
+
 torch.manual_seed(42)
 model = VGG(101)
 size_limiter = 0.05

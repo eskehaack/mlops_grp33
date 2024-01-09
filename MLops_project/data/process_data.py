@@ -3,19 +3,24 @@ import torch
 from torchvision import datasets, transforms
 from tqdm import tqdm
 import json
+from typing import Dict, Any, List
 
 
-def load_statistics(stat_filename):
+def load_statistics(stat_filename: str) -> Dict[str:float]:
     with open(f"data/processed/{stat_filename}", "r") as file:
         stats = json.load(file)
 
     return stats
 
 
-def calculate_mean_std():
-    transform = transforms.Compose(
-        [transforms.Resize((256, 256)), transforms.ToTensor()]
-    )
+def calculate_mean_std() -> Dict[str, float]:
+    """Iterates through the training dataset to calcuate the mean and std of the full
+    dataset, to determine key statistics for normalization.
+
+    Returns:
+        Dict[str,float]: Keys are the metric names, values being list of the metrics themselves
+    """
+    transform = transforms.Compose([transforms.Resize((64, 64)), transforms.ToTensor()])
     dataset = datasets.Food101(
         root="data/raw/", split="train", download=False, transform=transform
     )
@@ -39,14 +44,24 @@ def calculate_mean_std():
     return stats
 
 
-def process_data(split: str, normalization_constants: dict, seed: int):
+def process_data(split: str, normalization_constants: Dict[str, float], seed: int):
+    """Given a split specified as a string, use the saved normalization constants
+       given from normalization constant, to transform the dataset and save it as
+       processed splits.
+       If the split is "training", it splits the raw training dataset into train and validation 95/5.
+
+    Args:
+        split (str): train or test
+        normalization_constants (Dict[str,float]): Constant from calculate_mean_std
+        seed (int): random seed to ensure reproductionability
+    """
     # Calculate mean and std
     mean, std = normalization_constants.values()
 
     # Apply the normalization to the raw data
     transform_normalized = transforms.Compose(
         [
-            transforms.Resize((256, 256)),
+            transforms.Resize((64, 64)),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
         ]
