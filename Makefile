@@ -43,6 +43,7 @@ pre-commit:
 ## Process raw data into processed data
 data:
 	python $(PROJECT_NAME)/data/make_dataset.py
+	python $(PROJECT_NAME)/data/process_data.py
 
 #################################################################################
 # Documentation RULES                                                           #
