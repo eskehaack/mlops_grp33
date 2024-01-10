@@ -1,6 +1,3 @@
-import os
-
-
 import pytest
 from torch.utils.data import DataLoader
 
@@ -17,12 +14,8 @@ def test_food101_dataloader():
     bt_size = 64
     data = food101_dataloader(batch_size=bt_size)
     assert len(data) == 3, "Dataloader function did not return 3 objects"
-    assert all(
-        [type(dl) == DataLoader for dl in DataLoader]
-    ), "Dataloader function did not return DataLoader objects"
+    assert all([type(dl) == DataLoader for dl in DataLoader]), "Dataloader function did not return DataLoader objects"
     for i in range(3):
         for batch in data[i]:
-            assert (
-                len(batch) == bt_size
-            ), f"Dataloader batch size is {len(batch)} instead of the specified {bt_size}"
+            assert len(batch) == bt_size, f"Dataloader batch size is {len(batch)} instead of the specified {bt_size}"
             break

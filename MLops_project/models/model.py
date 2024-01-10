@@ -20,6 +20,7 @@ class VGG(pl.LightningModule):
         batch_size: int = 64,
         num_workers: int = 2,
         learning_rate: float = 1e-3,
+        load_datasets: bool = True,
     ) -> None:
         super().__init__()
 
@@ -35,12 +36,14 @@ class VGG(pl.LightningModule):
             nn.Dropout(),
             nn.Linear(4096, num_classes),
         )
-
-        self.criterium = nn.CrossEntropyLoss()
-        self.train_loader, self.val_loader, self.test_loader = food101_dataloader(
-            batch_size=batch_size, num_workers=num_workers
-        )
         self.lr = learning_rate
+        self.criterium = nn.CrossEntropyLoss()
+
+        self.load_datasets = load_datasets
+        if self.load_datasets:
+            self.train_loader, self.val_loader, self.test_loader = food101_dataloader(
+                batch_size=batch_size, num_workers=num_workers
+            )
 
     def _make_layers(batch_norm=False) -> nn.Sequential:
         layers = []
@@ -123,13 +126,19 @@ class VGG(pl.LightningModule):
         return optim.Adam(self.parameters(), lr=self.lr)
 
     def train_dataloader(self):
-        return self.train_loader
+        if self.load_datasets:
+            return self.train_loader
+        return None
 
     def val_dataloader(self):
-        return self.val_loader
+        if self.load_datasets:
+            return self.val_loader
+        return None
 
     def test_dataloader(self):
-        return self.test_loader
+        if self.load_datasets:
+            return self.test_loader
+        return None
 
 
 if __name__ == "__main__":

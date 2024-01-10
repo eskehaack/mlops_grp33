@@ -84,7 +84,7 @@ def main(checkpoint_path: str, data_path: str) -> List[Tuple[str, str]]:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Load the pre-trained model
-    model = VGG.load_from_checkpoint(checkpoint_path).to(device)
+    model = VGG.load_from_checkpoint(checkpoint_path, load_datasets=False).to(device)
     model.eval()  # Set the model to evaluation mode
 
     # Load the data

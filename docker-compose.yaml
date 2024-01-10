@@ -5,6 +5,10 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/train_model.dockerfile
+
+    env_file:
+      - personal/secrets.env
+
   predict:
     image: predict:latest
     build:

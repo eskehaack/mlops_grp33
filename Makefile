@@ -1,4 +1,4 @@
-.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation
+.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -35,6 +35,9 @@ clean:
 pre-commit:
 	pre-commit install
 
+## Compose
+compose:
+	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up --build
 
 #################################################################################
 # PROJECT RULES                                                                 #
