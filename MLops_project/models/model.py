@@ -14,7 +14,9 @@ class VGG(pl.LightningModule):
 
     """
 
-    def __init__(self, num_classes: int, batch_size: int, num_workers: int, learning_rate: float) -> None:
+    def __init__(
+        self, num_classes: int = 101, batch_size: int = 64, num_workers: int = 2, learning_rate: float = 1e-3
+    ) -> None:
         super().__init__()
 
         self.VGG16 = self._make_layers()
