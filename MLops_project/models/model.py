@@ -3,7 +3,7 @@ import torch
 import pytorch_lightning as pl
 import torch.nn as nn
 from torch import optim
-from data.dataload import food101_dataloader
+from MLops_project.data.dataload import food101_dataloader
 
 
 class VGG(pl.LightningModule):
@@ -14,7 +14,9 @@ class VGG(pl.LightningModule):
 
     """
 
-    def __init__(self, num_classes: int, batch_size: int, num_workers: int, learning_rate: float) -> None:
+    def __init__(
+        self, num_classes: int, batch_size: int, num_workers: int, learning_rate: float
+    ) -> None:
         super().__init__()
 
         self.VGG16 = self._make_layers()
