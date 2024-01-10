@@ -181,5 +181,3 @@ cython_debug/
 /wandb
 /lightning_logs
 /dtu_mlops
-
-/personal
