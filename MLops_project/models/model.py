@@ -3,7 +3,7 @@ import torch
 import pytorch_lightning as pl
 import torch.nn as nn
 from torch import optim
-from data.dataload import food101_dataloader
+from MLops_project.data.dataload import food101_dataloader
 
 
 class VGG(pl.LightningModule):
