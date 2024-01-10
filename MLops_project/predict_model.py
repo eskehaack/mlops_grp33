@@ -4,6 +4,7 @@ import pickle
 from torchvision import transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
+from MLops_project.data.process_data import load_statistics
 
 
 def predict(model: torch.nn.Module, dataloader: torch.utils.data.DataLoader) -> torch.Tensor:
@@ -29,10 +30,12 @@ def load_data(data_path):
             images = pickle.load(f)
         return torch.utils.data.TensorDataset(torch.from_numpy(images))
     else:  # assuming a folder of images
+        mean, std = load_statistics("training_split_stats.json").values()
         transform = transforms.Compose(
             [
-                transforms.Resize((224, 224)),  # Resize images if necessary
+                transforms.Resize((64, 64)),
                 transforms.ToTensor(),
+                transforms.Normalize(mean=mean, std=std),
             ]
         )
         dataset = ImageFolder(root=data_path, transform=transform)
