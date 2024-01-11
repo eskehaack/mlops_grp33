@@ -5,7 +5,7 @@
 #################################################################################
 
 PROJECT_NAME = MLops_project
-PYTHON_VERSION = 3.11.7
+PYTHON_VERSION = 3.10.12
 PYTHON_INTERPRETER = python
 
 #################################################################################
@@ -41,7 +41,7 @@ docker-trainer:
 
 ## make trainer docker torch
 docker-torch:
-	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model_torch.dockerfile . -t trainer:latest  && docker run --env-file=personal/secrets.env trainer:latest
+	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model_torch.dockerfile . -t trainer:latest  && docker run --gpus all --env-file=personal/secrets.env trainer:latest
 
 ## Compose
 compose:
