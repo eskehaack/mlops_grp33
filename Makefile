@@ -1,4 +1,4 @@
-.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit
+.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit docker-trainer
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -34,6 +34,10 @@ clean:
 ## Init pre-commit
 pre-commit:
 	pre-commit install
+
+## make trainer docker
+docker-trainer:
+	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model.dockerfile . -t trainer:latest  && docker run --env-file=personal/secrets.env trainer:latest
 
 ## Compose
 compose:
