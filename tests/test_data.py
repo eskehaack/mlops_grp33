@@ -2,7 +2,7 @@ import pytest
 from torch.utils.data import DataLoader
 
 
-from MLops_project import food101_dataloader
+from MLops_project import food101_dataloader, calculate_mean_std
 from data_check import data_check
 
 
@@ -20,6 +20,22 @@ def test_food101_dataloader():
         assert (
             len(images) == bt_size
         ), f"Dataloader image batch size is {len(images)} instead of the specified {bt_size}"
+
+
+@pytest.mark.skipif(
+    not data_check(),
+    reason="Data files not found",
+)
+def test_calculate_mean_std():
+    keys = ["mean", "std"]
+    parameters = calculate_mean_std()
+    assert parameters.isinstance(dict), f"Parameter output is not of type dict: {type(parameters)}"
+    assert all(
+        [key in parameters.keys() for key in keys]
+    ), f"Both mean and std should be in keys. Current keys {list(parameters.keys())}"
+    assert all(
+        [len(parameters[key]) == 3 for key in keys]
+    ), f"Parameters should be of length 3 (same as # of channels). Current dimension {[len(parameters[key]) for key in keys]}"
 
 
 if __name__ == "__main__":
