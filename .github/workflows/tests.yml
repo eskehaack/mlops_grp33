@@ -2,7 +2,7 @@ name: "Install with cache"
 
 on:
   push:
-    branches: [ main, staging_branch ]
+    branches: [ main, staging-branch ]
   pull_request:
     branches: [ main ]
 
