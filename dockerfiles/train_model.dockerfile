@@ -17,6 +17,6 @@ COPY data/processed data/processed
 
 WORKDIR /
 
-RUN pip install . --no-deps --no-cache-dir
+RUN pip install -e . --no-deps --no-cache-dir
 
 ENTRYPOINT ["python", "-u", "MLops_project/train_model.py"]

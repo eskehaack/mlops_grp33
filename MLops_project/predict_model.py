@@ -1,7 +1,6 @@
 import torch
 from torchvision import transforms
-from data.process_data import load_statistics
-from models.model import VGG
+from MLops_project import load_statistics, VGG
 from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 import os
