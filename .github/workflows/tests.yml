@@ -2,7 +2,7 @@ name: "Setup enviroment and run tests"
 
 on:
   push:
-    branches: [ main, staging-branch ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
