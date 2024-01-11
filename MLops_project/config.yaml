@@ -3,7 +3,7 @@ hyperparameters:
   num_workers: 2
   learning_rate: 1e-4
   max_epochs: 2
-  data_fraction: 0.05
+  data_fraction: 0.5
 wandb:
   project: "dtu_mlops_wandb"
   name: "test_run"

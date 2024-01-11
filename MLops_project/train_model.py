@@ -1,5 +1,5 @@
 from pytorch_lightning import Trainer
-from models.model import VGG
+from MLops_project.models.model import VGG
 import pytorch_lightning as pl
 import torch
 import hydra
