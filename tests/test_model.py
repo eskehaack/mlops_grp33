@@ -1,8 +1,11 @@
 import pytest
-from torch import ones
+from torch import ones, Tensor, LongTensor
 
-from MLops_project.models.model import VGG
+from MLops_project import VGG
 from data_check import data_check
+
+
+DATA = ones((1, 3, 64, 64))
 
 
 @pytest.mark.skipif(
@@ -11,7 +14,7 @@ from data_check import data_check
 )
 def test_VGG_output():
     out_dim = 101
-    inp_data = ones((1, 1, 64, 64))
+    inp_data = DATA
     model = VGG(out_dim, 64, 4, 0.001)
     out = model(inp_data)
 
@@ -27,14 +30,11 @@ def test_VGG_output():
 )
 def test_VGG_training():
     out_dim = 101
-    inp_data = ones((1, 1, 64, 64))
+    inp_data = DATA
     model = VGG(out_dim, 64, 4, 0.001)
-    loss = model.training_step((inp_data, 0), 0)
+    loss = model.training_step((inp_data, LongTensor([1])), Tensor([1]))
 
-    try:
-        float(loss)
-    except:
-        ValueError(f"Loss could not be converted to float: {loss}")
+    float(loss)  # If this fails, the test is failed
 
     assert loss > 0, f"Loss less than zero: {loss}"
 
@@ -45,14 +45,11 @@ def test_VGG_training():
 )
 def test_VGG_validation():
     out_dim = 101
-    inp_data = ones((1, 1, 64, 64))
+    inp_data = DATA
     model = VGG(out_dim, 64, 4, 0.001)
-    loss = model.validation_step((inp_data, 0), 0)
+    loss = model.validation_step((inp_data, LongTensor([1])), Tensor([1]))
 
-    try:
-        float(loss)
-    except:
-        ValueError(f"Loss could not be converted to float: {loss}")
+    float(loss)  # If this fails, the test is failed
 
     assert loss > 0, f"Loss less than zero: {loss}"
 
@@ -63,13 +60,10 @@ def test_VGG_validation():
 )
 def test_VGG_test():
     out_dim = 101
-    inp_data = ones((1, 1, 64, 64))
+    inp_data = DATA
     model = VGG(out_dim, 64, 4, 0.001)
-    loss = model.test_step((inp_data, 0), 0)
+    loss = model.test_step((inp_data, LongTensor([1])), Tensor([1]))
 
-    try:
-        float(loss)
-    except:
-        ValueError(f"Loss could not be converted to float: {loss}")
+    float(loss)  # If this fails, the test is failed
 
     assert loss > 0, f"Loss less than zero: {loss}"

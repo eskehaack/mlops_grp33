@@ -2,7 +2,7 @@ import pytest
 from torch.utils.data import DataLoader
 
 
-from MLops_project.data.dataload import food101_dataloader
+from MLops_project import food101_dataloader
 from data_check import data_check
 
 
