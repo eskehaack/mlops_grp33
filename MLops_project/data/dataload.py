@@ -1,35 +1,29 @@
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 import os
 from typing import List
 from hydra.utils import get_original_cwd
 
 
-class ProcessedFood101(torch.utils.data.Dataset):
+class ProcessedFood101(Dataset):
     def __init__(self, processed_folder):
         if "outputs" in os.getcwd():
             self.processed_folder = os.path.join(get_original_cwd(), processed_folder)
         else:
             self.processed_folder = os.path.join(os.getcwd(), processed_folder)
 
-        self.file_names = os.listdir(self.processed_folder)
+        # Assuming there is only one file per folder
+        file_name = os.listdir(self.processed_folder)[0]
+        self.data, self.labels = torch.load(os.path.join(self.processed_folder, file_name))
 
     def __len__(self):
-        return len(self.file_names)
+        return len(self.data)
 
     def __getitem__(self, idx):
-        file_name = self.file_names[idx]
-        return torch.load(os.path.join(self.processed_folder, file_name))
+        return self.data[idx], self.labels[idx]
 
 
 def food101_dataloader(batch_size=64, num_workers=4) -> List[DataLoader]:
-    """Custom dataloader creation function.
-      Takes processed data from the 3 splits: "train","val" and "test" from the data/processed/ folder
-    and packages it into 3 dataloaders for each split.
-
-    Returns:
-        List[DataLoader]: 3 loaders for each split in the respective order: Train, Validation, Test
-    """
     train = ProcessedFood101("data/processed/train")
     val = ProcessedFood101("data/processed/val")
     test = ProcessedFood101("data/processed/test")

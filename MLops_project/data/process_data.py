@@ -1,12 +1,10 @@
 import os
 import torch
 from torchvision import datasets, transforms
-from torch.utils.data import Dataset
-from torch.utils.data import Subset
 
 from tqdm import tqdm
 import json
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 
 def load_statistics(stat_filename: str) -> Dict[str, float]:
@@ -44,16 +42,14 @@ def calculate_mean_std() -> Dict[str, List[float]]:
     return stats
 
 
-def process_data(split: str, normalization_constants: Dict[str, float], seed: int):
-    """Given a split specified as a string, use the saved normalization constants
-       given from normalization constant, to transform the dataset and save it as
-       processed splits.
-       If the split is "training", it splits the raw training dataset into train and validation 95/5.
+def process_data(split: str, normalization_constants: Dict[str, float], seed: int, batch_size=1000):
+    """Process and save the dataset in batches.
 
     Args:
-        split (str): train or test
-        normalization_constants (Dict[str,float]): Constant from calculate_mean_std
-        seed (int): random seed to ensure reproductionability
+        split (str): 'train' or 'test'.
+        normalization_constants (Dict[str, float]): Mean and std for normalization.
+        seed (int): Seed for reproducibility.
+        batch_size (int): Number of images to process in each batch.
     """
     # Calculate mean and std
     mean, std = normalization_constants.values()
@@ -68,7 +64,7 @@ def process_data(split: str, normalization_constants: Dict[str, float], seed: in
     )
     dataset = datasets.Food101(root="data/raw/", split=split, download=False, transform=transform_normalized)
 
-    datasets_to_process: Dict[str, Subset] = {}
+    datasets_to_process = {}
     # Split the dataset into training and validation if the split is 'train'
     if split == "train":
         train_size = int(0.95 * len(dataset))
@@ -83,14 +79,24 @@ def process_data(split: str, normalization_constants: Dict[str, float], seed: in
         datasets_to_process = {split: dataset}
 
     for subset, data in datasets_to_process.items():
-        data: Dataset[Tuple[torch.Tensor, int]]  # type: ignore
         processed_folder = f"./data/processed/{subset}"
         if not os.path.exists(processed_folder):
             os.makedirs(processed_folder)
 
+        # Initialize lists to store all images and labels
+        all_images = []
+        all_labels = []
+
         # Aggregate images and labels
-        for i, (image, label) in tqdm(enumerate(data), total=len(data)):  # type: ignore
-            torch.save((image, label), os.path.join(processed_folder, f"data_{i}.pt"))  # type: ignore
+        for image, label in tqdm(data, total=len(data)):
+            all_images.append(image)
+            all_labels.append(label)
+
+        # Save all images and labels in a single file
+        torch.save(
+            (all_images, all_labels),
+            os.path.join(processed_folder, f"{subset}_data.pt"),
+        )
 
 
 if __name__ == "__main__":
