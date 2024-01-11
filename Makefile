@@ -1,11 +1,11 @@
-.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit docker-trainer
+.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit docker-trainer docker-torch
 
 #################################################################################
 # GLOBALS                                                                       #
 #################################################################################
 
 PROJECT_NAME = MLops_project
-PYTHON_VERSION = 3.11.7
+PYTHON_VERSION = 3.10.12
 PYTHON_INTERPRETER = python
 
 #################################################################################
@@ -38,6 +38,10 @@ pre-commit:
 ## make trainer docker
 docker-trainer:
 	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model.dockerfile . -t trainer:latest  && docker run --env-file=personal/secrets.env trainer:latest
+
+## make trainer docker torch
+docker-torch:
+	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model_torch.dockerfile . -t trainer:latest  && docker run --gpus all --env-file=personal/secrets.env trainer:latest
 
 ## Compose
 compose:

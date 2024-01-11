@@ -1,5 +1,5 @@
 # Base image
-FROM python:3.11.7-slim
+FROM python:3.10.12-slim
 
 RUN apt update && \
     apt install --no-install-recommends -y build-essential gcc && \
