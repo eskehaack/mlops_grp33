@@ -43,6 +43,12 @@ docker-trainer:
 compose:
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up --build
 
+## Create coverage report
+coverage:
+	coverage run -m pytest tests/
+	coverage report
+
+
 #################################################################################
 # PROJECT RULES                                                                 #
 #################################################################################
