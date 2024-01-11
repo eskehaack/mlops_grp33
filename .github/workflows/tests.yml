@@ -1,4 +1,4 @@
-name: "Install with cache"
+name: "Setup enviroment and run tests"
 
 on:
   push:
@@ -18,7 +18,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.11"]
+        python-version: ["3.11.7"]
+        pytorch-version: ["2.1.2"]
 
     steps:
     - name: Checkout
