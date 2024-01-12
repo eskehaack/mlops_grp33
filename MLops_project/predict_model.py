@@ -68,7 +68,7 @@ def load_data(data_path):
     return dataset
 
 
-def main(checkpoint_path: str, data_path: str) -> List[Tuple[str, str]]:
+def predict_main(checkpoint_path: str, data_path: str) -> List[Tuple[str, str]]:
     """
     Load a pre-trained model, perform predictions on a dataset, and return the results.
 
@@ -111,5 +111,5 @@ if __name__ == "__main__":
 
     model_path = sys.argv[1]
     data_path = sys.argv[2]
-    predictions = main(model_path, data_path)
+    predictions = predict_main(model_path, data_path)
     print(predictions)

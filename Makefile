@@ -1,4 +1,4 @@
-.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit docker-trainer docker-torch train predict profiling
+.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit docker-trainer docker-torch train predict profiling coverage docker-api
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -54,6 +54,10 @@ docker-trainer:
 ## make trainer docker torch
 docker-torch:
 	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model_torch.dockerfile . -t trainer:latest  && docker run --gpus all --env-file=personal/secrets.env trainer:latest
+
+docker-api:
+	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/serve_api_predict.dockerfile . -t predict_api:latest  && docker run  -p 8000:8000 predict_api:latest
+
 
 ## Compose
 compose:
