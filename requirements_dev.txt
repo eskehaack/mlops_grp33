@@ -16,3 +16,6 @@ mkdocstrings[python]>=0.18
 
 # Profiler
 torch-tb-profiler == 0.4.3
+
+# DVC
+dvc == 3.39.0
