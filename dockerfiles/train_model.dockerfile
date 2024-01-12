@@ -13,8 +13,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY pyproject.toml pyproject.toml
 COPY MLops_project/ MLops_project/
-COPY data/processed data/processed
-
 WORKDIR /
 
 RUN pip install -e . --no-deps --no-cache-dir

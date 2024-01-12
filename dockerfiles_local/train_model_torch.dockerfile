@@ -14,6 +14,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 WORKDIR /
 COPY pyproject.toml pyproject.toml
 COPY MLops_project/ MLops_project/
+COPY data/processed data/processed
 
 
 

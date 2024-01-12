@@ -94,7 +94,11 @@ def predict_main(checkpoint_path: str, data_path: str) -> List[Tuple[str, str]]:
     predictions, filenames = predict(model, dataloader, device)  # Ensure predict is properly defined elsewhere
 
     # Load label mappings
-    with open("data/processed/label_mapping.json", "r") as json_file:
+    if os.path.exists("/gcs"):
+        gcs_string = "/gcs/dtu_mlops_grp33_processed_data/"
+    else:
+        gcs_string = ""
+    with open(gcs_string + "data/processed/label_mapping.json", "r") as json_file:
         labels = json.load(json_file)
 
     # Convert predictions to actual labels

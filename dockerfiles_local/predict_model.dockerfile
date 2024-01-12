@@ -9,6 +9,9 @@ COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
 COPY MLops_project/ MLops_project/
 
+COPY data/processed/training_split_stats.json data/processed/training_split_stats.json
+COPY data/processed/label_mapping.json data/processed/label_mapping.json
+
 COPY test_images test_images
 COPY outputs/2024-01-10/13-00-17/models/epoch=0-val_loss=0.00.ckpt outputs/2024-01-10/13-00-17/models/epoch=0-val_loss=0.00.ckpt
 
