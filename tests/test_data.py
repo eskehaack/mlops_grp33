@@ -42,7 +42,7 @@ def test_calculate_mean_std():
     """
     keys = ["mean", "std"]
     parameters = calculate_mean_std()
-    assert parameters.isinstance(dict), f"Parameter output is not of type dict: {type(parameters)}"
+    assert isinstance(parameters, dict), f"Parameter output is not of type dict: {type(parameters)}"
     assert all(
         [key in parameters.keys() for key in keys]
     ), f"Both mean and std should be in keys. Current keys {list(parameters.keys())}"

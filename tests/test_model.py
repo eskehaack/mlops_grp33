@@ -1,6 +1,5 @@
 import pytest
-from torch import ones, Tensor, LongTensor
-import numpy as np
+from torch import ones, Tensor, LongTensor, isnan
 
 from MLops_project import VGG
 from data_check import data_check
@@ -48,7 +47,7 @@ def test_VGG_training():
     loss = model.training_step((inp_data, LongTensor([1])), Tensor([1]))
 
     float(loss)  # If this fails, the test is failed
-    assert not np.isnan(loss)
+    assert not isnan(loss)
     assert loss >= 0, f"Loss less than zero: {loss}"
 
 
