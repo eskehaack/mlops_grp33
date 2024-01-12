@@ -14,6 +14,6 @@ def profiler(cfg):
         main(cfg)
 
 
-
 if __name__ == "__main__":
+    print("Remember to activate the tensorboard via visual studio code add on.")
     profiler()

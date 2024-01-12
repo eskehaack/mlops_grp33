@@ -1,4 +1,4 @@
-.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit docker-trainer docker-torch train predict
+.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit docker-trainer docker-torch train predict profiling
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -29,6 +29,10 @@ train:
 ## Predict
 predict:
 	python $(PROJECT_NAME)/predict_model.py
+
+## Profiling
+profiling:
+	python workflows/profiling.py
 
 ## Install Developer Python Dependencies
 dev_requirements: requirements
