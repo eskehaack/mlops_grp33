@@ -7,13 +7,24 @@ import os
 import wandb
 from pytorch_lightning.callbacks import ModelCheckpoint
 import yaml
+from google.cloud import secretmanager
 
 torch.manual_seed(42)
 
 
+def access_secret_version():
+    """
+    Access the secret version and return the payload.
+    """
+    client = secretmanager.SecretManagerServiceClient()
+    name = "projects/735066189170/secrets/WANDB-KEY/versions/latest"
+    response = client.access_secret_version(request={"name": name})
+    return response.payload.data.decode("UTF-8")
+
+
 @hydra.main(config_path=".", config_name="config")
 def main(cfg):
-    wandb_api_key = os.environ.get("WANDB_API_KEY")
+    wandb_api_key = access_secret_version() if condition else os.environ.get("WANDB_API_KEY")
     wandb.login(key=wandb_api_key)
 
     model = VGG(
@@ -69,4 +80,5 @@ if __name__ == "__main__":
 
     config_path = "./MLops_project/config.yaml"
     update_yaml_config(config_path, new_run_dir)
+
     main()
