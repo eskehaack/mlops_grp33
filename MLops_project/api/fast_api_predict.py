@@ -7,7 +7,9 @@ import shutil
 from MLops_project import predict_main
 
 app = FastAPI()
-models_directory = "outputs/2024-01-10/13-00-17/models/"
+condition = os.path.exists("/gcs")
+
+models_directory = "gcs/dtu_mlops_grp33_processed_data/outputs/" if condition else "outputs/"
 temp_dir = "temp_data/"
 selected_model = None  # Global variable to store the selected model
 
@@ -38,10 +40,16 @@ async def ui_root():
 
 @app.get("/ui/models/", response_class=HTMLResponse)
 async def list_models():
-    models = [f for f in os.listdir(models_directory) if f.endswith(".ckpt")]
+    models = []
+    for root, dirs, files in os.walk(models_directory):
+        for file in files:
+            if file.endswith(".ckpt"):
+                models.append(os.path.join(root, file))
+
     html_content = "<h1>Select a Model</h1>"
     for model in models:
-        html_content += f"<form action='/ui/set_model/' method='post'><button name='model_name' type='submit' value='{model}'>{model}</button></form>"
+        model_name = os.path.basename(model)
+        html_content += f"<form action='/ui/set_model/' method='post'><button name='model_name' type='submit' value='{model_name}'>{model_name}</button></form>"
     return html_content
 
 
