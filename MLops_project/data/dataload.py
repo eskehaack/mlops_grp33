@@ -8,7 +8,7 @@ from hydra.utils import get_original_cwd
 class ProcessedFood101(torch.utils.data.Dataset):
     def __init__(self, processed_folder):
         if os.path.exists("/gcs"):
-            processed_folder = os.path.join("/gcs/dtu_mlops_grp33_processed_data/", processed_folder)
+            self.processed_folder = os.path.join("/gcs/dtu_mlops_grp33_processed_data/", processed_folder)
         elif "outputs" in os.getcwd():
             self.processed_folder = os.path.join(get_original_cwd(), "data", processed_folder)
         else:
