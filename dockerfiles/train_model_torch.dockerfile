@@ -18,4 +18,6 @@ COPY MLops_project/ MLops_project/
 
 RUN pip install -e . --no-deps --no-cache-dir
 
+RUN ln -s /gcs/dtu_mlops_grp33_processed_data/outputs outputs
+
 ENTRYPOINT ["python", "-u", "MLops_project/train_model.py"]

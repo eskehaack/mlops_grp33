@@ -6,7 +6,7 @@ import hydra
 import os
 import wandb
 from pytorch_lightning.callbacks import ModelCheckpoint
-
+import yaml
 
 torch.manual_seed(42)
 
@@ -38,12 +38,35 @@ def main(cfg):
         limit_test_batches=size_limiter,
         limit_val_batches=size_limiter,
         check_val_every_n_epoch=1,
-        logger=pl.loggers.WandbLogger(project=cfg.wandb.project, name=cfg.wandb.name),
+        logger=pl.loggers.WandbLogger(
+            project=cfg.wandb.project,
+            name=cfg.wandb.name,
+            entity=cfg.wandb.entity,
+        ),
         callbacks=[checkpoint_callback],
     )
     trainer.fit(model)
     trainer.test(model)
 
 
+def update_yaml_config(file_path, new_run_dir):
+    with open(file_path, "r") as file:
+        config = yaml.safe_load(file)
+
+    config["hydra"]["run"]["dir"] = new_run_dir
+
+    with open(file_path, "w") as file:
+        yaml.safe_dump(config, file)
+
+
 if __name__ == "__main__":
+    condition = os.path.exists("/gcs")
+    new_run_dir = (
+        "/gcs/dtu_mlops_grp33_processed_data/outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}"
+        if condition
+        else "./outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}"
+    )
+
+    config_path = "./MLops_project/config.yaml"
+    update_yaml_config(config_path, new_run_dir)
     main()

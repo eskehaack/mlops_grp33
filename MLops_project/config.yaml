@@ -1,9 +1,13 @@
+hydra:
+  run:
+    dir: ./outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
 hyperparameters:
   batch_size: 64
-  num_workers: 2
+  data_fraction: 1.0
   learning_rate: 1e-4
-  max_epochs: 2
-  data_fraction: 0.05
+  max_epochs: 50
+  num_workers: 23
 wandb:
-  project: "dtu_mlops_wandb"
-  name: "test_run"
+  entity: dtu_mlops_project
+  name: run_${now:%Y-%m-%d_%H-%M-%S}
+  project: dtu_mlops_wandb_deploy
