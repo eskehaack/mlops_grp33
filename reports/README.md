@@ -105,7 +105,7 @@ end of the project.
 >
 > Answer:
 
---- question 1 fill here ---
+33
 
 ### Question 2
 > **Enter the study number for each member in the group**
@@ -116,7 +116,7 @@ end of the project.
 >
 > Answer:
 
---- question 2 fill here ---
+*s214588, s214593, s214643*
 
 ### Question 3
 > **What framework did you choose to work with and did it help you complete the project?**
@@ -148,7 +148,8 @@ end of the project.
 >
 > Answer:
 
---- question 4 fill here ---
+In managing dependencies for our project, we opted for a Conda setup complemented by "requirements.txt" and "requirements_dev.txt" files. When a new team member joins, replicating the environment is a straightforward process. By executing the "make environment" command in the Makefile, the Conda environment is created seamlessly. Simultaneously, the "make requirements" command installs necessary project dependencies, aligning the development and production setups. This systematic approach ensures consistency across team members and environments.\
+The use of Conda provides an efficient means of packaging, distributing, and replicating the software environment. The Makefile acts as a convenient orchestrator for these tasks, enhancing accessibility for newcomers. The separation of requirements into distinct files caters to both project execution and development needs. In essence, our strategy revolves around simplicity and clarity, allowing new contributors to effortlessly set up an environment that mirrors the established standards, fostering a smooth onboarding experience.
 
 ### Question 5
 
@@ -174,7 +175,7 @@ end of the project.
 >
 > Answer:
 
---- question 6 fill here ---
+We enforced code quality and format standards in our project using "ruff" within a .pre-commit setup. This ensures automatic checks and fixes. In larger projects, adhering to coding standards is crucial for readability, collaboration, and maintainability. Consistent formatting streamlines comprehension and reduces errors, facilitating teamwork. Moreover, standardized code improves maintainability over time, enabling smoother integration of new features and minimizing debugging efforts. The implementation of such rules enhances overall project robustness and fosters a cohesive and efficient development environment.
 
 ## Version control
 
@@ -193,7 +194,9 @@ end of the project.
 >
 > Answer:
 
---- question 7 fill here ---
+
+Tests in our project evaluate model and data processing. For model validation, individual data points are inferred, ensuring correct output dimensions. Scripts (training, validation, testing) undergo checks with random data, verifying loss type and non-negativity. Data loader validation involves running the loader and confirming proper batch creation and output dimensions. This comprehensive testing strategy ensures model accuracy, script functionality, and data loader integrity, contributing to a robust and reliable system.
+
 
 ### Question 8
 
@@ -208,7 +211,7 @@ end of the project.
 >
 > Answer:
 
---- question 8 fill here ---
+We only recieved a code coverage of about 75% (can be reproduced)
 
 ### Question 9
 
