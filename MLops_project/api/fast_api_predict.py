@@ -5,11 +5,14 @@ import uvicorn
 from http import HTTPStatus
 import shutil
 from MLops_project import predict_main
+from google.cloud import storage
+
 
 app = FastAPI()
-condition = os.path.exists("/gcs")
 
-models_directory = "gcs/dtu_mlops_grp33_processed_data/outputs/" if condition else "outputs/"
+
+models_directory = None  # THIS IS A GLOBAL VARIABLE. IM CHANGED IN MAIN RUNTIME
+
 temp_dir = "temp_data/"
 selected_model = None  # Global variable to store the selected model
 model_name_to_path = {}
@@ -43,12 +46,6 @@ async def ui_root():
 async def list_models():
     global model_name_to_path
     model_name_to_path.clear()
-
-    print(os.getcwd())
-    print(models_directory)
-    if "gcs" in models_directory:
-        print(os.listdir("gcs/dtu_mlops_grp33_processed_data/"))
-        print(os.listdir(models_directory))
 
     models = []
     for root, dirs, files in os.walk(models_directory):
@@ -176,7 +173,23 @@ async def image_upload(data: UploadFile = File(...)):
     return response
 
 
+def download_folder(bucket_name, prefix, dl_dir):
+    if not os.path.exists(dl_dir):
+        os.mkdir(dl_dir)
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket(bucket_or_name=bucket_name)
+    blobs = bucket.list_blobs(prefix=prefix, match_glob="**/*.ckpt")  # Get list of files
+    for blob in blobs:
+        print(blob)
+        filename = blob.name.replace("/", "_")
+        blob.download_to_filename(dl_dir + filename)  # Download  # Download
+
+
 if __name__ == "__main__":
+    download_folder("dtu_mlops_grp33_processed_data", "outputs/", "model_checkpoints/")
+    condition = os.path.exists("model_checkpoints/")
+    models_directory = "model_checkpoints/" if condition else "outputs/"
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
     if os.path.isdir(temp_dir):
         shutil.rmtree(temp_dir)

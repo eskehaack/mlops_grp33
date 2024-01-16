@@ -16,4 +16,4 @@ COPY MLops_project/ MLops_project/
 RUN pip install -e . --no-deps --no-cache-dir
 
 # ENTRYPOINT ["/bin/bash"]
-ENTRYPOINT ["uvicorn", "--app-dir", "MLops_project/api", "fast_api_predict:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["python", "MLops_project/api/fast_api_predict.py"]
