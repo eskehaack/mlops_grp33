@@ -323,7 +323,8 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 15 fill here ---
+In order to ensure maximum reproduceability we created docker images for each training. The API also had it's own docker image. \
+Docker images were build and run by make commands. To build the docker images for training, we used the following command (wrapped in a make command): ```docker build -f dockerfiles/train_model_torch.dockerfile . -t trainer:latest```. To run the docker image we used the following (again wrapped as a make command) ```docker run --gpus all --env-file=personal/secrets.env trainer:latest```. The dockerfile of course includes the different directories needed, as well as the setups of the envirment and the dependecies.
 
 ### Question 16
 
@@ -355,7 +356,11 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 17 fill here ---
+To complete the project we used the following GCP services:
+ * Triggers -- To automatically build docker images of both the train model and api app, when needed.
+ * Bucket -- To store our data, parameters and models.
+ * Vertex AI -- To train our model through a docker image.
+ * Cloud run -- To host our api app.
 
 ### Question 18
 
@@ -379,7 +384,7 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 19 fill here ---
+[Here you go](figures/bucket.jpg)
 
 ### Question 20
 
@@ -388,7 +393,7 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 20 fill here ---
+[Here you go](figures/registry.jpg)
 
 ### Question 21
 
@@ -397,7 +402,7 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 21 fill here ---
+[Here you go](figures/build.jpg)
 
 ### Question 22
 
