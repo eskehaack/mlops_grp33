@@ -41,7 +41,7 @@ def main(cfg):
         save_top_k=1,  # Save the top k models
         verbose=True,  # Print a message when a checkpoint is saved
         monitor="val_acc",  # Metric to monitor for deciding the best model
-        mode="min",  # Mode for the monitored quantity for model selection
+        mode="max",  # Mode for the monitored quantity for model selection
     )
     trainer = Trainer(
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
