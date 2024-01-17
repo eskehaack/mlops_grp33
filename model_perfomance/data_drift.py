@@ -84,8 +84,8 @@ def load_drift_data(model_path, data_path):
 
 
 def evidently_tests(reference: str, current: str) -> None:
-    reference = pd.read_csv("workflows/" + reference)
-    current = pd.read_csv("workflows/" + current)
+    reference = pd.read_csv("model_performance/" + reference)
+    current = pd.read_csv("model_performance/" + current)
 
     report = TestSuite(
         tests=[
