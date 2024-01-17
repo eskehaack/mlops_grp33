@@ -148,7 +148,7 @@ end of the project.
 >
 > Answer:
 
-In managing dependencies for our project, we opted for a Conda setup complemented by "requirements.txt" and "requirements_dev.txt" files. When a new team member joins, replicating the environment is a straightforward process. By executing the "make environment" command in the Makefile, the Conda environment is created seamlessly. Simultaneously, the "make requirements" command installs necessary project dependencies, aligning the development and production setups. This systematic approach ensures consistency across team members and environments.\
+In managing dependencies for our project, we opted for a Conda setup complemented by "requirements.txt" and "requirements_dev.txt" files. When a new team member joins, replicating the environment is a straightforward process. By executing the "make environment" command in the Makefile, the Conda environment is created seamlessly. Afterward, the "make requirements" command installs necessary project dependencies, aligning the development and production setups. This systematic approach ensures consistency across team members and environments.\
 The use of Conda provides an efficient means of packaging, distributing, and replicating the software environment. The Makefile acts as a convenient orchestrator for these tasks, enhancing accessibility for newcomers. The separation of requirements into distinct files caters to both project execution and development needs. In essence, our strategy revolves around simplicity and clarity, allowing new contributors to effortlessly set up an environment that mirrors the established standards, fostering a smooth onboarding experience.
 
 ### Question 5
@@ -164,7 +164,8 @@ The use of Conda provides an efficient means of packaging, distributing, and rep
 > *experiments.*
 > Answer:
 
---- question 5 fill here ---
+For this project, we used the standard cookiecutter format and file structure. We initialised this structure from the start but removed folders that we did not deem necessary, such as the notebooks folder since we do not use any notebooks. We used the data folder for containing data. The main project folder contains the train and prediction scripts while also containing scripts that process the data, we have not used the visualisation subfolder and is therefore removed. The dockerfiles folder contains the needed docker files to create images and containers, we have both dockerfiles for local setup and a cloud setup. We also added a folder for personal data, such as wandb API keys. The tests folder contains the unit tests that we use. The model performance folder contains tools such as profiling, and a script to perform data drift analysis. Lastly, since we use Hydra as our configuration tool, we also have an output folder that contains all outputs from training and prediction scripts, such as checkpoints for models, logs and wandb files.
+
 
 ### Question 6
 
@@ -211,7 +212,7 @@ Tests in our project evaluate model and data processing. For model validation, i
 >
 > Answer:
 
-We only recieved a code coverage of about 75% (can be reproduced)
+Our code currently achieves a 65% code coverage, as verified by the "make coverage" command from the Makefile. While 100% coverage is ideal, achieving it might not guarantee error-free code. The limitation stems from large functions encompassing extensive functionality, including loading the entire dataset, making testing time-consuming. However, breaking down these functions into smaller units and linking them could enhance coverage without compromising efficiency. While high coverage instills confidence, it's crucial to balance it with practicality, recognizing that thorough testing and code design contribute collectively to reliability. Striking this balance allows us to prioritize testing essential components without compromising project efficiency.
 
 ### Question 9
 
@@ -226,7 +227,7 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 9 fill here ---
+While our project primarily operated on the Google Cloud console, limiting extensive use of Git features, we incorporated some branch and pull request practices. Feature branches were employed for significant changes, with the main development residing in the "staging-branch." Pull requests facilitated the merge of feature branches into the development branch, maintaining version control. Though formal reviews were optional for non-main branch changes, we adhered to pull request structures, ensuring systematic integration. Branches and pull requests, even in a simplified workflow, contribute to organized collaboration, version control, and code review processes, fostering a more robust development environment. To better utilize the full functionality of Git, we should’ve used several more feature branches for specific fixes.
 
 ### Question 10
 
@@ -241,7 +242,7 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 10 fill here ---
+While DVC is setup up for the processed data of our project, we ended up not utilizing it fully due to transfer limits when using object versioning of our 101k images. While we attempted to modify our dataset to better fit with DVC we instead suffered performance gains during training. Instead we mainly continued using deterministic generation of a processed dataset from our original raw data. DVC would have really shined for this project if we had gone in depth with different transformations and other processing steps, as it would have allowed us to track the development in model performance concurrently with changes in processed data used for training. Likewise, object versioning would shine if we had heavier data processing such that the checkout and pull of an old data version, would be faster than rerunning an old processing setup, to reproduce earlier results.
 
 ### Question 11
 
@@ -257,7 +258,8 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 11 fill here ---
+
+For continuous integration, we primarily used unit testing performed by GitHub actions. For this, we define a test structure that runs on push and pull requests onto the main branch of the project repository. We structure our git so that we have a staging branch, in which features are added onto and when hitting a larger checkpoint within the project, we then merge this staging branch into the main branch. We want the tests to run when we do this, since we want to ensure that the main branch is executable and working. We test on both a ubuntu and windows system on a single python version 3.11.7 and pytorch version 2.1.2. When a push or pull request is done, it then runs our 3 unit tests on each of the systems. We perform these tests with caching, where we cache the dependencies required to run the tests and the pip system. We do this to increase the speed of future tests, since they no longer need to reinstall dependencies. Also another reason is that we have limited usage of Github actions as free users, so caching reduces the amount of required usages. We keep the caching limited to only the pip and the dependencies, since we want to avoid using too much storage.
 
 ## Running code and tracking experiments
 
@@ -276,7 +278,7 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 12 fill here ---
+To run our experiments with the configuration we made use of Hydra, to track both hyperparameters and wandb entity info. Ideally, we would also add every other argument given in the main train_model.py script to make the entire training easily configurable. While it be a nice addition to add a argparser to allow for terminal configuration of a training before running, we simply found it unnecessary since we mostly setup an experiment with predetermined variables and put it into a docker image defaulting the python call anyways. For debugging we simply used nano/vim within the containers.
 
 ### Question 13
 
@@ -291,7 +293,8 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 13 fill here ---
+First we created a setup that allowed hydra to store all output in folders named by time of running. This setup was modified to also work with VertexAI so it was stored directly into our Google bucket for use by the inference model. Further, we setup wandb such that it stores all hydra hyperparameters with the runs as well as logs the git states of the repo matching the model deployments. As such the experiments can be replicated by simply checking out the git states of the time.
+A shortcoming of the current setup is that we create and run docker containers using “make” commands, which are not automatically reflected in the logging of the used command for running. Ideally this should automatically be added as part of the wandb logging for even simpler replication.
 
 ### Question 14
 
@@ -308,7 +311,16 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
---- question 14 fill here ---
+For the simple wandb logging setup we are doing for this project we simply track key metrics for the training. We opted not to log the validation loss as we decided the validation accuracy was a more describing metric for model performance. While our model works with images we deliberately decided not to log any images, as sampling images with their current predictions did not give any objective insight in the development of the model.
+
+We specifically use the validation and test as we consider our baseline performance a 1/101% because of the 101 labels. As such accuracy serves as an easy to compare metric for model performance. It could potentially also be worth to measure the validation loss, as this would give an insight into the continued convergence of the model that might not be reflected in the accuracy.
+
+As mentioned in the previous question we also logged the git states of model deployment to easily checkout the state of the code used in the training, if reproduction was necessary. However as previously mentioned we cannot currently track the docker commands used for the build.
+
+
+Lastly as also mentioned previously we also log al defined hyperparameters to wandb’s dashboard to allow for comparison between models with different hyperparameters:
+
+
 
 ### Question 15
 
@@ -323,8 +335,13 @@ We only recieved a code coverage of about 75% (can be reproduced)
 >
 > Answer:
 
-In order to ensure maximum reproduceability we created docker images for each training. The API also had it's own docker image. \
-Docker images were build and run by make commands. To build the docker images for training, we used the following command (wrapped in a make command): ```docker build -f dockerfiles/train_model_torch.dockerfile . -t trainer:latest```. To run the docker image we used the following (again wrapped as a make command) ```docker run --gpus all --env-file=personal/secrets.env trainer:latest```. The dockerfile of course includes the different directories needed, as well as the setups of the envirment and the dependecies.
+To ensure maximum reproducibility we created docker images for several specific use cases. As such there were individual images for training, torch optimized training, as well as for the inference API to serve the prediction model. For each of these images we had 2 sets of dockerfiles, as we developed different configuration depending if we ran the models locally, and thus copied the processed data into the containers, or for cloud where the data would be taken from the mounted Google buckets. Likewise we made better user of  build caching when run locally.
+
+For most of the Docker setups we made elaborate Makefile commands, allowing for building and running in single concise commands. As an example, to build the docker images for training, bash command associated with local torch-optimized training consisted of:
+ ```docker build -f dockerfiles_local/train_model_torch.dockerfile . -t trainer:torch_local```.
+```docker run --gpus all --shm-size=4g --env-file=personal/secrets.env trainer:torch_local```.
+The associated dockerfile can be found at:
+https://github.com/eskehaack/mlops_grp33/blob/12528a508a1c7114b34035152299aa0d8029cabc/dockerfiles_local/train_model_torch.dockerfile
 
 ### Question 16
 
@@ -339,7 +356,9 @@ Docker images were build and run by make commands. To build the docker images fo
 >
 > Answer:
 
---- question 16 fill here ---
+While developing machine learning, bugs in the code are almost imminent. To resolve bugs, we’ve utilised VS code's built-in debugger. While pdb is a nice tool and gives you a lot of freedom when debugging, the built-in debugger in VS code is much more convenient, and doesn’t require any type of setup to get started. \
+For profiling, we’ve utilised the PyTorch profiler for both CPU and CUDA performance.  For a run on the CPU, we see that what takes the most time by a large margin is the copy operation, followed by the convolution layers and the backpropagation of these layers. This profile makes sense, since there are a lot of images that need to be loaded and copied. Based on this profiling, we did not do much optimization, since more time was spent on getting the model onto the cloud service, and the model had a reasonable training time. Since the tensorboard is too large in data size for github to handle, to get a tensorboard, run ‘make profiling’. A screenshot of the board is given
+
 
 ## Working in the cloud
 
@@ -375,7 +394,12 @@ To complete the project we used the following GCP services:
 >
 > Answer:
 
---- question 18 fill here ---
+Instead of using Compute Engine directly we instead setup the training with VertexAI and hosting the Inference API with cloud run.
+We specifically went with VertexAI as it allowed us to run our training script purely containerized instead of hosting it within a VM, as well as being able to directly access our processed data stored in Google buckets, rather than having to copy it into the containers. In the end we did not get to complete a full training in VertexAI as we were waiting for quotas for either a T4 or K80 accelerator, which we would have most likely used with a “n1-standard-4” machine.
+
+For the inference API we build our container using a simple cpu-bound cloud-run setup, with minimal maximum instances, as we assumed low traffic as well as small image batches per requested inference.
+
+However during the development of the project we did utilize a compute engine to prototype several solutions, often simply setting up a n1-standard-1 or n1-standard-4 with a T4 gpu. However, we experienced continuous problems in building images contained within google cloud itself, as well as accessing data in the buckets which led us to use VertexAi instead.
 
 ### Question 19
 
@@ -383,8 +407,15 @@ To complete the project we used the following GCP services:
 > **You can take inspiration from [this figure](figures/bucket.png).**
 >
 > Answer:
+Due to the earlier mentioned DVC problems we ended up having to use 1 bucket for non-object versioned DVC files, and 1 bucket with processed data, as well as the output of hydra from training in VertexAI:
 
-[Here you go](figures/bucket.jpg)
+Processed data and outputs:
+
+
+
+DVC:
+
+![Here you go](figures/bucket.jpg)
 
 ### Question 20
 
@@ -393,7 +424,7 @@ To complete the project we used the following GCP services:
 >
 > Answer:
 
-[Here you go](figures/registry.jpg)
+![Here you go](figures/registry.jpg)
 
 ### Question 21
 
@@ -402,7 +433,7 @@ To complete the project we used the following GCP services:
 >
 > Answer:
 
-[Here you go](figures/build.jpg)
+![Here you go](figures/build.jpg)
 
 ### Question 22
 
@@ -418,7 +449,9 @@ To complete the project we used the following GCP services:
 >
 > Answer:
 
---- question 22 fill here ---
+We first build a standalone prediction script using .ckpt files from our training, as well as a folder destination of images for label inference. Then we wrapped the prediction model in a FastAPI application, where we both included a simple HTML UI for human interaction, as well as leaving the backend API interactable with the normal curl-callable endpoints.
+
+Then as explained earlier we deploy the inference API using cloud-run, with our data-feeder service account such that the service during load, downloads all available model checkpoints, from the bucket, into its container allowing for selection between them. Then the user is free to either choose the model(at /models/), or images(/images() they want first, and finally invoke predict(at /predict/) to get the inferred label for each of the supplied images. The same can be done by prefixing any of the 3 methods by /ui/*, to get the HTML representations of the API instead.
 
 ### Question 23
 
@@ -433,7 +466,7 @@ To complete the project we used the following GCP services:
 >
 > Answer:
 
---- question 23 fill here ---
+We implemented a data drift analysis, which tests new data compared to the original data the number and share of drifted columns. For new data, it would be obvious to use new data that belongs within the food101 database classes, such as Lasagna or Eggs benedict. Since we’re working with images, we use simple quantifications of the data such as average brightness, contrast and sharpness. This data drift is a very simple setup, and does not say much about any drifts, future work should look at a more in depth analysis. For the cloud monitoring we used the gcp monitoring service and set up alerts based on the usage of the API. This is a simple setup that tests the amount of entries and bytes that the API service receives. The alert system is set up so that an email is sent when crossing a certain threshold.
 
 ### Question 24
 
@@ -447,7 +480,10 @@ To complete the project we used the following GCP services:
 >
 > Answer:
 
---- question 24 fill here ---
+During the development and deployment of models, the most expensive service has been keeping data in the buckets and the access to these(approx 10$).
+Since we did not get to train our model on VertexAI we simply did a cost estimation of training.
+Assuming a T4/K80 can do about the same acceleration as a 1070, we would only need about 2 hours for the model to converge for 0.22$(CPU)+0.4$(GPU) per hour, and it would not have cost more than 3$ per training(with overhead).
+We estimate the final cost to be less than 25$, with continued API service.
 
 ## Overall discussion of project
 
@@ -468,7 +504,9 @@ To complete the project we used the following GCP services:
 >
 > Answer:
 
---- question 25 fill here ---
+![This diagram](figures/mlops_diagram.png) describes our overall architecture.
+Starting from the developer side of the diagram there are two paths, both related to version control. This is important, as everything the developer creates, should be stored to ensure proper version control. Going across we go through the .pre-commit setup, in which we use ruff to automatically lint the committed code and make sure it lives up to the PEP-8 standards. From here the developer can choose to tag their code. If the code was pushed to the main branch (preferably using a PR) and tagged a couple of automatic events will trigger. GitHub actions will start checking whether the code still has the functionality it needs (in our case this is halting, read more in questions 8 and 11).
+The other trigger is run through Cloud Build, here we build 3 different docker images: One for running the serve API app, one for training the model, and a less important prediction image. Potentially we could make a setup, in which both the serve API image is deployed and the training image is run automatically, this is not our case, as we had issues with getting GPUs for training our model in the cloud. Furthermore, the data pushed by the developer, though DVC, is stored in a Cloud Storage bucket. From here the training image can access the training data (which is also images, but the picture kind. Very strange, I know). During training, the training image regularly pushed logs to Weights and Biases, which we use to follow the progression of our training. After training is complete the saved model is pushed to a Cloud Storage bucket (along with its configs and key metrics). From here the end user will be able to view the newest model (and older versions for that matter) and upload a set of test images for inference. In short, the developer should only need to push a new tag in order to start the entire pipeline (which will properly take about two hours to complete). However, there are a few manual processes currently due to limitations on Google Cloud.
 
 ### Question 26
 
@@ -482,7 +520,10 @@ To complete the project we used the following GCP services:
 >
 > Answer:
 
---- question 26 fill here ---
+During this project, we’ve encountered a series of challenges, mostly regarding the new software solutions used in the course. The first challenge we encountered was regarding the Data Version Control framework. The specific issue was finding a suitable platform and format to store our data, that also allowed us to pull and push data with useable speeds.
+While using Google Drive we discovered that sharing access for such a larger data space is a timely process. Instead, we tried using Google Storage Buckets, here we could easily share the data, but the pull speeds was halted significantly due to DVC not being properly utilizing multi-threaded computations compared to the deprecated gsutil implementation. After spending an unfortunate amount of time on trying to fix it with different data and thus dataloading structures, the resulting DVC setup did not utilize object versioning and therefore stored the data in a format only readable by DVC. Because of this we were required to upload a second “normal” (non-dvc) data set to a different bucket for the cloud models to train with.\
+
+The next big challenge was training the model on cloud services. As the data was located in a bucket on Google Storage we assumed that t the Cloud Run service would have access to it… this was not the case. Instead, we tried the Vertex AI Service, as this was easier to set up. In Vertex AI we didn't have access to a GPU by default and had to request access from customer services, which didn’t go through.
 
 ### Question 27
 
@@ -498,5 +539,7 @@ To complete the project we used the following GCP services:
 > *All members contributed to code by...*
 >
 > Answer:
-
---- question 27 fill here ---
+Magnus (s214588): Developed the main runtime for the train and prediction scripts, with the corresponding Pytorch Lightning model and supporting dataloading setup, as well as the wrapper for the API wrapper for the prediction script and hydra configs. Primary DVC struggler. The main contributor to the development and debugging of the docker setup for all images, as well as fixing the cloud builds and runs. Managed the deployment of VertexAI training and Inference API cloud run.
+Lachlan (s214593): Was in charge of implementing the profiling with the use of the tensorboard module. Also the charge of setting up the data drift analysis and monitoring of the cloud service. Also was in charge of setting up the wandb team and project. Also contributed to CI integration of unit tests.
+Eske (s214643) was in charge of the repository setup and control, here including the CI setup for unit testing. The creator of the individual unit tests and coverage setups. Primary rubber duck for s214588. In charge of the cloud build setup, creating the Cloud Build triggers and setups, and enabling the code to be built on the cloud service.
+All members contributed with the debugging of code.
