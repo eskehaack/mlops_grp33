@@ -37,7 +37,7 @@ def main(cfg):
 
     checkpoint_callback = ModelCheckpoint(
         dirpath="models/",  # Path where checkpoints will be saved
-        filename="{epoch}-{val_loss:.2f}",  # Checkpoint file name
+        filename="{epoch}-{val_acc:.2f}",  # Checkpoint file name
         save_top_k=1,  # Save the top k models
         verbose=True,  # Print a message when a checkpoint is saved
         monitor="val_acc",  # Metric to monitor for deciding the best model

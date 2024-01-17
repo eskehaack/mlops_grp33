@@ -181,3 +181,7 @@ cython_debug/
 /wandb
 /lightning_logs
 /dtu_mlops
+
+# profiling report
+
+report.html
