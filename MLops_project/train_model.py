@@ -57,6 +57,7 @@ def main(cfg):
         ),
         callbacks=[checkpoint_callback],
     )
+
     trainer.fit(model)
     trainer.test(model)
 
