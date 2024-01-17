@@ -1,15 +1,15 @@
 import torch
 import numpy as np
-from MLops_project import food101_dataloader, calculate_mean_std
+#from MLops_project import food101_dataloader, calculate_mean_std
 from MLops_project.predict_model import predict_main, load_data
 from torchvision import transforms
 import os
 
 def load_org_data(path):
     # load all .pt files in the folders (takes a while)
-    val_path = os.path.join(os.getcwd(), path + "/val")
-    test_path = os.path.join(os.getcwd(), path + "/test") 
-    train_path = os.path.join(os.getcwd(), path + "/train")
+    val_path = "C:/Users/Lachl/Documents/GitHub/mlops_grp33/data/processed/val"
+    test_path = "C:/Users/Lachl/Documents/GitHub/mlops_grp33/data/processed/test"
+    train_path = "C:/Users/Lachl/Documents/GitHub/mlops_grp33/data/processed/train"
     val_filenames = [os.path.join(val_path, f) for f in os.listdir(val_path) if f.endswith(".pt")]
     test_filenames = [os.path.join(test_path, f) for f in os.listdir(test_path) if f.endswith(".pt")]
     train_filenames = [os.path.join(train_path, f) for f in os.listdir(train_path) if f.endswith(".pt")]
@@ -20,8 +20,9 @@ def load_org_data(path):
     train_tensors = [torch.load(f) for f in train_filenames]
 
     # Combine all tensors
-    tensors = val_tensors.extend(train_tensors)
-    tensors = val_tensors.extend(test_tensors)
+    val_tensors.extend(test_tensors)
+    val_tensors.extend(train_tensors)
+    tensors = val_tensors
 
     # Get labels and images
     images = [t[0] for t in tensors]
@@ -57,9 +58,14 @@ def load_drift_data(data_path, model_path):
 
 if __name__ == "__main__":
     #load_drift_data("data", "model/model.pt")
-    images, labels = load_org_data("data/processed")
-    print("Done loading data")
-    get_features(images, labels)
+    #images, labels = load_org_data("data/processed")
+    #print("Done loading data")
+    #get_features(images, labels)
+
+    path = "C:/Users/Lachl/Desktop/foods"
+
+    dataset = load_data(path)
+    print(dataset)
 
 
 
