@@ -54,14 +54,12 @@ docker-trainer:
 
 ## make trainer docker torch
 docker-torch:
-	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model_torch.dockerfile . -t trainer:latest  && docker run --gpus all --env-file=personal/secrets.env trainer:latest
+	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model.dockerfile . -t trainer:latest  && docker run --gpus all --env-file=personal/secrets.env trainer:latest
 
 docker-api:
 	export DOCKER_BUILDKIT=1 && \
 	docker build -f dockerfiles/serve_api_predict.dockerfile . -t predict_api:latest  && \
 	docker run \
-	-e GOOGLE_APPLICATION_CREDENTIALS=/personal/molten-avenue-410709-93f2403a753c.json \
-    -v $(GOOGLE_APPLICATION_CREDENTIALS):/personal/molten-avenue-410709-93f2403a753c.json:ro \
     -p 8000:8000 \
 	predict_api:latest
 run-api:
