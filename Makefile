@@ -1,11 +1,12 @@
-.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit
+.PHONY: create_environment requirements dev_requirements clean data build_documentation serve_documentation compose pre-commit docker-trainer docker-torch train predict profiling coverage docker-api docker-torch-local
+
 
 #################################################################################
 # GLOBALS                                                                       #
 #################################################################################
 
 PROJECT_NAME = MLops_project
-PYTHON_VERSION = 3.11.7
+PYTHON_VERSION = 3.10.12
 PYTHON_INTERPRETER = python
 
 #################################################################################
@@ -20,7 +21,20 @@ create_environment:
 requirements:
 	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
 	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
+	$(PYTHON_INTERPRETER) -m pip install -r requirements_dev.txt
 	$(PYTHON_INTERPRETER) -m pip install -e .
+
+## Train model
+train:
+	python $(PROJECT_NAME)/train_model.py
+
+## Predict
+predict:
+	python $(PROJECT_NAME)/predict_model.py
+
+## Profiling
+profiling:
+	python workflows/profiling.py
 
 ## Install Developer Python Dependencies
 dev_requirements: requirements
@@ -35,9 +49,40 @@ clean:
 pre-commit:
 	pre-commit install
 
+## make trainer docker
+docker-trainer:
+	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model.dockerfile . -t trainer:latest  && docker run --env-file=personal/secrets.env trainer:latest
+
+## make trainer docker torch
+docker-torch:
+	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles/train_model_torch.dockerfile . -t trainer:torch  && docker run --gpus all --env-file=personal/secrets.env trainer:torch
+docker-torch-local:
+	export DOCKER_BUILDKIT=1 && docker build -f dockerfiles_local/train_model_torch.dockerfile . -t trainer:torch_local  && docker run --gpus all --shm-size=4g --env-file=personal/secrets.env trainer:torch_local
+
+docker-api:
+	export DOCKER_BUILDKIT=1 && \
+	docker build -f dockerfiles/serve_api_predict.dockerfile . -t predict_api:latest  && \
+	docker run \
+    -p 8000:8000 \
+	predict_api:latest
+run-api:
+	docker run \
+	-e GOOGLE_APPLICATION_CREDENTIALS=/personal/molten-avenue-410709-93f2403a753c.json \
+    -v $(GOOGLE_APPLICATION_CREDENTIALS):/personal/molten-avenue-410709-93f2403a753c.json:ro \
+    -p 8000:8000 \
+	-it --entrypoint bash \
+	predict_api:latest
+
+
 ## Compose
 compose:
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up --build
+
+## Create coverage report
+coverage:
+	coverage run -m pytest tests/
+	coverage report
+
 
 #################################################################################
 # PROJECT RULES                                                                 #

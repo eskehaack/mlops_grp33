@@ -1,0 +1,54 @@
+<!-- index.html -->
+<html>
+
+<head>
+    <title>FastAPI Image Prediction Application</title>
+</head>
+
+<body>
+    <h1>Welcome to the FastAPI Image Prediction Application</h1>
+
+    <h2>Using the API Directly</h2>
+    <p>For programmatic access, you can interact with the API directly:</p>
+    <ol>
+        <li>
+            <strong>Upload Image:</strong>
+            <p>Send a POST request with your image to the <code>/images/</code> endpoint.</p>
+        </li>
+        <li>
+            <strong>List Models:</strong>
+            <p>Send a GET request to the <code>/models/</code> endpoint to view the list of available models.</p>
+        </li>
+        <li>
+            <strong>Predict:</strong>
+            <p>Send a POST request with the model name to the <code>/predict/</code> endpoint to perform a prediction.
+            </p>
+        </li>
+    </ol>
+
+    <h2>Using the Web UI</h2>
+    <p>You can also interact with the application via a user-friendly web interface:</p>
+    <ol>
+        <li>
+            <strong>Upload Image:</strong>
+            <p>Visit the <a href="/ui/images/">Upload Image</a> page to upload an image through the web interface.</p>
+        </li>
+        <li>
+            <strong>List Models:</strong>
+            <p>Go to the <a href="/ui/models/">List Models</a> page to see available models and select one for
+                prediction.</p>
+        </li>
+        <li>
+            <strong>Predict:</strong>
+            <p>After selecting a model, use the <a href="/ui/predict/">Predict</a> page to perform a prediction.</p>
+        </li>
+    </ol>
+
+    <p>Additionally, you can explore the API in more detail using:</p>
+    <ul>
+        <li><a href="/docs/">Swagger UI Documentation</a></li>
+        <li><a href="/redoc/">ReDoc Documentation</a></li>
+    </ul>
+</body>
+
+</html>
