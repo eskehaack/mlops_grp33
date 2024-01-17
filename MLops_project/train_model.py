@@ -44,6 +44,7 @@ def main(cfg):
         mode="max",  # Mode for the monitored quantity for model selection
     )
     trainer = Trainer(
+        accelerator="gpu" if torch.cuda.is_available() else "cpu",
         max_epochs=cfg.hyperparameters.max_epochs,
         limit_train_batches=size_limiter,
         limit_test_batches=size_limiter,
