@@ -15,6 +15,7 @@ WORKDIR /
 COPY pyproject.toml pyproject.toml
 COPY MLops_project/ MLops_project/
 COPY data/processed data/processed
+COPY .git .git
 
 
 

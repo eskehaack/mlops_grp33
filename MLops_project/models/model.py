@@ -44,6 +44,7 @@ class VGG(pl.LightningModule):
             self.train_loader, self.val_loader, self.test_loader = food101_dataloader(
                 batch_size=batch_size, num_workers=num_workers
             )
+        self.save_hyperparameters()
 
     def _make_layers(batch_norm=False) -> nn.Sequential:
         layers = []
