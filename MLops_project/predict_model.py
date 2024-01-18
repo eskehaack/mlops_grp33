@@ -1,7 +1,6 @@
 import torch
 from torchvision import transforms
-from data.process_data import load_statistics
-from models.model import VGG
+from MLops_project import load_statistics, VGG
 from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 import os
@@ -69,7 +68,7 @@ def load_data(data_path):
     return dataset
 
 
-def main(checkpoint_path: str, data_path: str) -> List[Tuple[str, str]]:
+def predict_main(checkpoint_path: str, data_path: str) -> List[Tuple[str, str]]:
     """
     Load a pre-trained model, perform predictions on a dataset, and return the results.
 
@@ -94,7 +93,6 @@ def main(checkpoint_path: str, data_path: str) -> List[Tuple[str, str]]:
     # Predict
     predictions, filenames = predict(model, dataloader, device)  # Ensure predict is properly defined elsewhere
 
-    # Load label mappings
     with open("data/processed/label_mapping.json", "r") as json_file:
         labels = json.load(json_file)
 
@@ -112,5 +110,5 @@ if __name__ == "__main__":
 
     model_path = sys.argv[1]
     data_path = sys.argv[2]
-    predictions = main(model_path, data_path)
+    predictions = predict_main(model_path, data_path)
     print(predictions)

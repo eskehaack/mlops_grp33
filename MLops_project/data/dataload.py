@@ -7,10 +7,12 @@ from hydra.utils import get_original_cwd
 
 class ProcessedFood101(torch.utils.data.Dataset):
     def __init__(self, processed_folder):
-        if "outputs" in os.getcwd():
-            self.processed_folder = os.path.join(get_original_cwd(), processed_folder)
+        if os.path.exists("/gcs"):
+            self.processed_folder = os.path.join("/gcs/dtu_mlops_grp33_processed_data/", processed_folder)
+        elif "outputs" in os.getcwd():
+            self.processed_folder = os.path.join(get_original_cwd(), "data", processed_folder)
         else:
-            self.processed_folder = os.path.join(os.getcwd(), processed_folder)
+            self.processed_folder = os.path.join(os.getcwd(), "data", processed_folder)
 
         self.file_names = os.listdir(self.processed_folder)
 
@@ -30,9 +32,9 @@ def food101_dataloader(batch_size=64, num_workers=4) -> List[DataLoader]:
     Returns:
         List[DataLoader]: 3 loaders for each split in the respective order: Train, Validation, Test
     """
-    train = ProcessedFood101("data/processed/train")
-    val = ProcessedFood101("data/processed/val")
-    test = ProcessedFood101("data/processed/test")
+    train = ProcessedFood101("processed/train")
+    val = ProcessedFood101("processed/val")
+    test = ProcessedFood101("processed/test")
     train_loader = DataLoader(train, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val, batch_size=batch_size, shuffle=False, num_workers=num_workers)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=False, num_workers=num_workers)

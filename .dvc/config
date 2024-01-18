@@ -1,5 +1,4 @@
 [core]
-    remote = google_bucket
-['remote "google_bucket"']
-    url = gs://dtu_mlops_grp33_data_repo/
-    version_aware = true
+    remote = google_bucket_no_version
+['remote "google_bucket_no_version"']
+    url = gs://dtu_mlops_grp33_data_no_version_aware/
