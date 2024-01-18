@@ -3,7 +3,7 @@ import numpy as np
 from MLops_project.predict_model import predict_main, load_data
 from torchvision import transforms
 from evidently.test_suite import TestSuite
-from evidently.tests import TestNumberOfDriftedColumns, TestShareOfDriftedColumns
+from evidently.tests import TestNumberOfDriftedColumns, TestShareOfDriftedColumns, TestNumberOfConstantColumns, TestNumberOfDuplicatedRows, TestHighlyCorrelatedColumns
 import pandas as pd
 import json
 import os
@@ -84,13 +84,19 @@ def load_drift_data(model_path, data_path):
 
 
 def evidently_tests(reference: str, current: str) -> None:
-    reference = pd.read_csv("model_performance/" + reference)
-    current = pd.read_csv("model_performance/" + current)
+    reference = pd.read_csv("performance/" + reference)
+    current = pd.read_csv("performance/" + current)
 
     report = TestSuite(
         tests=[
+            # Data Drift
             TestNumberOfDriftedColumns(),
             TestShareOfDriftedColumns(),
+
+            #Quality tests
+            TestNumberOfConstantColumns(),
+            TestNumberOfDuplicatedRows(),
+            TestHighlyCorrelatedColumns(),
         ]
     )
     report.run(reference_data=reference, current_data=current)
@@ -98,11 +104,14 @@ def evidently_tests(reference: str, current: str) -> None:
 
 
 if __name__ == "__main__":
+    # Original data metrics
     # images, labels = load_org_data("data/processed")
     # get_features(images, labels, name="org_metrics.csv")
 
+    # Drift data metrics
     # model_path = "/home/lachlan/mlops_grp33/outputs/2024-01-16/11-14-24/models/model.ckpt"
     # data_path = "/home/lachlan/mlops_grp33/workflows/test_images"
     # load_drift_data(model_path, data_path)
 
+    # Run evidently tests
     evidently_tests("org_metrics.csv", "drift_metrics.csv")
