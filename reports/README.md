@@ -95,8 +95,8 @@ end of the project.
 ### Additional
 
 * [ ] Revisit your initial project description. Did the project turn out as you wanted?
-* [ ] Make sure all group members have a understanding about all parts of the project
-* [ ] Uploaded all your code to github
+* [X] Make sure all group members have a understanding about all parts of the project
+* [X] Uploaded all your code to github
 
 ## Group information
 
@@ -261,7 +261,7 @@ While DVC is setup up for the processed data of our project, we ended up not uti
 >
 > Answer:
 
-For continuous integration, we primarily used unit testing performed by GitHub actions. For this, we define a test structure that runs on push and pull requests onto the main branch of the project repository. We structure our git so that we have a staging branch, in which features are added and when hitting a larger checkpoint within the project, we then merge this staging branch into the main branch. We want the tests to run when we do this since we want to ensure that the main branch is executable and working. We test on both ubuntu and Windows system on a single python version 3.11.7 and pytorch version 2.1.2. When a push or pull request is done, it then runs our 3 unit tests on each of the systems. We perform these tests with caching, where we cache the dependencies required to run the tests and the pip system. We do this to increase the speed of future tests since they no longer need to reinstall dependencies. Also another reason is that we have limited usage of Github actions as free users, so caching reduces the amount of required usage. We keep the caching limited to only the pip and the dependencies since we want to avoid using too much storage.
+For continuous integration, we primarily used unit testing performed by GitHub actions. For this, we define a test structure that runs on push and pull requests onto the main branch of the project repository. We structure our git so that we have a staging branch, in which features are added and when hitting a larger checkpoint within the project, we then merge this staging branch into the main branch. We want the tests to run when we do this since we want to ensure that the main branch is executable and working. We only test on ubuntu latest, as the entire project is ment to be build into docker containers. In terms of python versions, we are using 3.10.12 and pytorch version 2.1.2. When a push or pull request is done, it then runs our 3 unit tests on each of the systems. We perform these tests with caching, where we cache the dependencies required to run the tests and the pip system. We do this to increase the speed of future tests since they no longer need to reinstall dependencies. Also another reason is that we have limited usage of Github actions as free users, so caching reduces the amount of required usage. We keep the caching limited to only the pip and the dependencies since we want to avoid using too much storage.
 
 ## Running code and tracking experiments
 
